@@ -6,7 +6,7 @@ The application is built using **Streamlit** for the user interface and **LangCh
 
 ---
 
-## ✨ Features
+## Features
 
 - **Custom Post Generation:** Generate posts based on selected topic, length (Short, Medium, Long), and language (English, Hinglish).  
 - **Few-Shot Learning:** Automatically selects relevant past posts to provide the LLM with examples of the influencer’s writing style.  
@@ -14,17 +14,17 @@ The application is built using **Streamlit** for the user interface and **LangCh
 
 ---
 
-## 🧠 Technical Architecture
+##  Technical Architecture
 
 The project follows a **two-stage architecture**:
 
-### 🧩 Stage 1: Data Preprocessing (Offline)
+###  Stage 1: Data Preprocessing (Offline)
 - Raw post data (`data/raw_posts.json`) is processed by `preprocess.py`.  
 - The LLM extracts metadata such as line count, language, and initial tags.  
 - A second LLM call unifies similar tags (e.g., “Job Hunting” and “Jobseekers” → “Job Search”).  
 - The enriched and categorized data is saved to `data/processed_posts.json`.  
 
-### ⚙️ Stage 2: Post Generation (Online)
+###  Stage 2: Post Generation (Online)
 - The Streamlit app (`main.py`) takes user input (Topic, Length, Language).  
 - `few_shot.py` filters `processed_posts.json` to find 1–2 matching examples.  
 - `post_generator.py` constructs a final prompt, including the user’s request and few-shot examples.  
@@ -32,7 +32,7 @@ The project follows a **two-stage architecture**:
 
 ---
 
-## 🧭 How It Works
+## How It Works
 
 This tool analyzes the posts of a LinkedIn influencer and helps them create new posts based on their past writing style.
 
@@ -48,7 +48,7 @@ For example, if **Mohan** is a LinkedIn influencer, he can feed his past LinkedI
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 | File/Directory | Description |
 |----------------|-------------|
@@ -64,7 +64,7 @@ For example, if **Mohan** is a LinkedIn influencer, he can feed his past LinkedI
 
 ---
 
-## 🧰 Setup and Installation
+##  Setup and Installation
 
 ### Prerequisites
 - **Python 3.10+**  
@@ -78,8 +78,39 @@ cd project-genai-post-generator
 
 ### 2. Install Dependencies
 Install the required Python packages using pip:
-```bash
+
 pip install -r requirements.txt
 
 
+### 3. Configure API Key
 
+Create a .env file in the root of the project directory and add your Groq API key:
+
+# .env file
+GROQ_API_KEY=YOUR_GROQ_API_KEY_HERE
+
+
+Replace YOUR_GROQ_API_KEY_HERE with your actual Groq API key.
+
+### 4. (Optional) Run Data Preprocessing
+
+If you modify data/raw_posts.json or want to refresh the processed dataset, run:
+
+python preprocess.py
+
+
+This will regenerate data/processed_posts.json.
+
+### Usage
+
+Run the Streamlit app:
+
+streamlit run main.py
+
+
+The application will launch in your default browser at:
+
+http://localhost:8501
+
+
+Select your topic, length, and language, then click Generate to create a new LinkedIn post in your style.
