@@ -1,28 +1,85 @@
-# project-genai-post-generator
-This tool will analyze posts of a LinkedIn influencer and help them create the new posts based on the writing style in their old posts  
+# GenAI LinkedIn Post Generator
 
-<img src="resources/tool.jpg"/>
+This project is a **LinkedIn Post Generator tool** designed to help influencers create new posts that mimic their unique writing style. It analyzes a set of past posts to extract key characteristics and uses **Few-Shot Learning** with a **Large Language Model (LLM)** to generate new, contextually relevant content.
 
-Let's say Mohan is a LinkedIn influencer and he needs help in writing his future posts. He can feed his past LinkedIn posts to this tool and it will extract key topics. Then he can select the topic, length, language etc. and use Generate button to create a new post that will match his writing style. 
+The application is built using **Streamlit** for the user interface and **LangChain** for orchestrating LLM calls, leveraging the **Groq API** for fast inference with the **Llama 3.2** model.
 
-## Technical Architecture
-<img src="resources/architecture.jpg"/>
+---
 
-1. Stage 1: Collect LinkedIn posts and extract Topic, Language, Length etc. from it.
-1. Stage 2: Now use topic, language and length to generate a new post. Some of the past posts related to that specific topic, language and length will be used for few shot learning to guide the LLM about the writing style etc.
+## ✨ Features
 
-## Set-up
-1. To get started we first need to get an API_KEY from here: https://console.groq.com/keys. Inside `.env` update the value of `GROQ_API_KEY` with the API_KEY you created. 
-2. To get started, first install the dependencies using:
-    ```commandline
-     pip install -r requirements.txt
-    ```
-3. Run the streamlit app:
-   ```commandline
-   streamlit run main.py
-   ```
-Copyright (C) Codebasics Inc. All rights reserved.
+- **Custom Post Generation:** Generate posts based on selected topic, length (Short, Medium, Long), and language (English, Hinglish).  
+- **Few-Shot Learning:** Automatically selects relevant past posts to provide the LLM with examples of the influencer’s writing style.  
+- **Data Preprocessing:** Includes a script to enrich raw post data with metadata (line count, language, tags) and unify tags for better categorization.  
+
+---
+
+## 🧠 Technical Architecture
+
+The project follows a **two-stage architecture**:
+
+### 🧩 Stage 1: Data Preprocessing (Offline)
+- Raw post data (`data/raw_posts.json`) is processed by `preprocess.py`.  
+- The LLM extracts metadata such as line count, language, and initial tags.  
+- A second LLM call unifies similar tags (e.g., “Job Hunting” and “Jobseekers” → “Job Search”).  
+- The enriched and categorized data is saved to `data/processed_posts.json`.  
+
+### ⚙️ Stage 2: Post Generation (Online)
+- The Streamlit app (`main.py`) takes user input (Topic, Length, Language).  
+- `few_shot.py` filters `processed_posts.json` to find 1–2 matching examples.  
+- `post_generator.py` constructs a final prompt, including the user’s request and few-shot examples.  
+- The prompt is sent to the **Groq API (Llama 3.2)** to generate the new post.  
+
+---
+
+## 🧭 How It Works
+
+This tool analyzes the posts of a LinkedIn influencer and helps them create new posts based on their past writing style.
+
+For example, if **Mohan** is a LinkedIn influencer, he can feed his past LinkedIn posts to this tool. It will extract key topics and let him choose a topic, post length, and language. After clicking **Generate**, it creates a new post that matches Mohan’s writing style.
+
+<img src="resources/tool.jpg" alt="Tool Preview" width="600"/>
+
+### System Architecture Overview
+<img src="resources/architecture.jpg" alt="System Architecture" width="600"/>
+
+1. **Stage 1:** Collect LinkedIn posts and extract Topic, Language, and Length.  
+2. **Stage 2:** Use the extracted data to generate new posts, applying few-shot learning to replicate the writing style.  
+
+---
+
+## 📁 Project Structure
+
+| File/Directory | Description |
+|----------------|-------------|
+| `main.py` | Streamlit application entry point and UI layout. |
+| `post_generator.py` | Core logic for prompt construction and LLM invocation. |
+| `few_shot.py` | Handles loading and filtering the few-shot example data. |
+| `llm_helper.py` | Initializes the ChatGroq client and loads the API key from `.env`. |
+| `preprocess.py` | Script to enrich raw data and unify tags using the LLM. |
+| `requirements.txt` | List of Python dependencies. |
+| `data/` | Contains `raw_posts.json` and `processed_posts.json` (the few-shot data). |
+| `resources/` | Contains supporting images like `architecture.jpg` and `tool.jpg`. |
+| `.env` | File to store the `GROQ_API_KEY`. |
+
+---
+
+## 🧰 Setup and Installation
+
+### Prerequisites
+- **Python 3.10+**  
+- A **Groq API Key** (obtain one from [Groq Console](https://console.groq.com/keys))  
+
+### 1. Clone the Repository
+
+git clone https://github.com/Gesare-n/Post-Generator-.git
+cd project-genai-post-generator
 
 
-**Additional Terms:**
-This software is licensed under the MIT License. However, commercial use of this software is strictly prohibited without prior written permission from the author. Attribution must be given in all copies or substantial portions of the software.
+### 2. Install Dependencies
+Install the required Python packages using pip:
+```bash
+pip install -r requirements.txt
+
+
+
